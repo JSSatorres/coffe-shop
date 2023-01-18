@@ -1,11 +1,11 @@
 const {Schema, model}= require("mongoose")
 
 const UserSchema = Schema({
-    nombre:{
+    name:{
         type:String,
         require:[true, 'el nombre del usuario es requerido']
     },
-    correo:{
+    email:{
         type:String,
         require:[true, 'el corero del usuario es requerido'],
         unique:true

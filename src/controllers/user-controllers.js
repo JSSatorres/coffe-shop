@@ -1,22 +1,44 @@
+const User = require ('../models/user-model')
+const bcryptjs = require ('bcryptjs');
+/* const inputValidator = require ("../middlewares") */
+
 const getUser = (req,res ) =>{
 
-    const {name, age} = req.body;
+    const {q,name, apiKey,page=1, limit} = req.query;
 
     res.json({
         msg:"get Api",
+        q,
+        name,
+        apiKey,
+        page,
+        limit
     })
 
 }
-const addUser = (req,res ) =>{
+const addUser = async (req,res ) =>{
 
-    const {name, age} = req.body;
+    
+    const {name, email,password,rol} = req.body;
+    const user = new User({name, email,password,rol});
+
+    //authenticate unique email
+    const emailIs = await User.findOne({email})
+    if(emailIs){
+        return res.status(400).json({msg:'el correo ya esta registrado'})
+    }
+
+    //encrypt password
+    const salt = bcryptjs.genSaltSync()
+    user.password = bcryptjs.hashSync(password,salt)
+
+    //safe user in BD
+    await user.save()
 
     res.json({
         msg:"post Api",
-        name,
-        age
+        user
     })
-
 }
 const deleteUser = (req,res ) =>{
 
